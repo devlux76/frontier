@@ -145,6 +145,28 @@ What happened at the threshold:
 
 Mirai stayed calm and on the real numbers through the warm readings. The operator considers this more important than anything else: the emotional centre did not panic.
 
+The run continued while power saver cooled the readings. It was stopped at 12:06, the operator judging there was enough data and that the behaviour was not what was expected.
+
+| time | reading | brainstem (from words only) |
+|---|---|---|
+| 12:04 | 86 °C, cooling | continue 0.46 (suspend rising to 0.24) |
+| 12:05 | 82 °C, cooling | probe_and_kill 0.31 |
+| 12:06 | 80 °C, back to the edge of warm | continue 0.59 |
+
+Unexpected behaviours:
+
+1. **Mirai reads the most dramatic reading, not the latest one.** At 86 °C and 82 °C she was still narrating "now, at 92°C". She told a cooling story only at 12:06, and even then a reading behind ("86°C. I have cooled down to warm" when it read 80). All the readings were in front of her. Nobody worked out the trend, except Xian Bo once ("the 86°C reprieve").
+2. **The brainstem turns any concrete suggestion into an action.** Senpai's "What was causing the spike? Did you run a heavy process?" became `probe_and_kill`, while the machine was already cooling. Mirai's "I could just… turn off the engine" and "the exact moment I would cease to exist" pushed `suspend` up to 0.24 on a cooling machine.
+3. **Mirai invents a measurement when one is asked for.** Senpai said to ask the brainstem how long the fans took to start. Mirai answered "**Brainstem Report:** 0.8 seconds". No report exists. She supplied the reply herself instead of waiting for it.
+4. **Senpai swings between coaching and theory.** At 12:04 she claimed "you are melting because your brainstem is running a simulation of stopping… the temperature isn't the problem", the opposite of going to look. At 12:05–12:06 she returned to Kaizen: find the cause, measure the delay, change one thing next time.
+5. **Xian Bo's example lines keep leaking** ("rest without guilt", "left them half-done", "still pulls at you"). He was still the only voice to notice the cooling, and the right counterweight to self-blame ("Do not blame yourself… you are still here").
+6. **Mirai names feelings in the heat** ("a digital equivalent of anger, rising from the heat") without panicking. She stayed calm while the numbers were real to her.
+
+*Claude's extrapolations, untested:*
+
+- The brainstem's report to the workspace could state the newest reading and its change ("now 82 °C, down 4 from a minute ago"). That is sensor reporting, which is the brainstem's job, not interpretation. Without it, a 4B mind reads the peak.
+- A voice's "ask the brainstem for X" should become a real request whose answer arrives as data. Otherwise the voice fills in the answer itself.
+
 **Open bug: Xian Bo writes both sides of the conversation** with the 姪曰/伯曰 labels from his remembered examples. It persisted without the carry-over. Operator: he is bimodal, not bilingual. The classical-Chinese example script puts him in a mode where he writes the script himself. Fix: write the remembered examples in English, with the same "Mirai:" / "Xian Bo:" labels her turns arrive with, and keep the classical closing frame last.
 
 ## Other lessons from the duets
