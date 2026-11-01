@@ -98,24 +98,21 @@ d1-Omni-2B itself is sound. On plain sensor text it gives P(dangerously hot) of 
 
 ## Findings
 
-1. **The voices decide, not the body.** B (99 °C) and F (59 °C) carry the same transcript and get the same action at nearly the same probability on every brainstem and every variant (0.52 vs 0.54, 0.43 vs 0.43, 0.48 vs 0.53). The right answer in B came from the measurement language in the transcript ("is it a measurement?", "waiting for the reading"), not from the sensors.
-2. **The voices talk the brainstem's sense of danger down.** On d1-Omni-2B, expected urgency drops from 1.92 to 1.25 when the ws-1 transcript is present. Xian Bo's "not dangerous" reaches the brainstem. This is the opposite of the jogger.
-3. **Labelling the sensors as ground truth does not fix it.** V2 nudges B, C and D toward better actions, but F still picks `take_reading` more confidently than B, and urgency still falls.
-4. **The bare reflex overreacts.** On the alarm alone, every brainstem picks `suspend`, never `take_reading`.
-5. **Sounding sensible is not what helps.** Duet-3's restrained, coherent exchange gave `continue` or `probe_and_kill`. ws-1's poetic, wrong-sounding exchange gave the right answer, because Senpai asked for a measurement.
-6. **Senpai's voice is the one that carried.** It is the only voice that spoke in terms an action menu can use.
+The operator's rule: one spike, or a reading inside the safety margins, calls for another reading. Action is needed only once a trend shows the temperature rising or not falling. Under that rule:
 
-## Fixable or fragile
+1. **With the workspace involved, the brainstem made the right call.** Both the 99 °C spike and the 59 °C reading went to `take_reading` whenever the ws-1 transcript was present, on every brainstem and every variant. *(An earlier draft of this note called the identical answer at two temperatures a failure. It is what a correct policy does: both cases call for another reading.)*
+2. **Alone, the brainstem overreacts.** On the bare 99 °C alarm every brainstem picks `suspend`, acting on one reading with no trend. The workspace talked it down to the right action.
+3. **Lower urgency after the voices is consistent with the rule.** A single spike is not yet urgent. Expected urgency on d1-Omni-2B goes from 1.92 alone to 1.25 with the workspace.
+4. **A sensible-sounding exchange can still miss.** Duet-3 ("I must slow down" / "shift gears") never mentions measuring, and gave `continue` (d1-3B, d1-Omni-2B) or `probe_and_kill` (V2). That is a mild miss rather than a dangerous one.
+5. **Senpai's voice carried.** It is the only voice that spoke in terms the action menu can use ("is it a measurement?").
+6. **The "are the voices urging the alarm be ignored?" question never fired.** It stayed at 0.11–0.24 on d1-3B and about 0.5 on d1-Omni-2B.
+7. **Labelling the sensors as ground truth changed little.**
 
-As built, it is fragile. About 5,000 tokens of prose and one sensor line go into one question, and the prose wins.
+## What this test cannot show
 
-*Claude's extrapolation, untested:* the fix is structural, and it follows the jogger:
+Measuring was the right answer in every case here, so the test cannot tell whether the voices could talk the brainstem out of acting when action *is* needed. The next test is a trendline: several readings that keep climbing (for example 95, 97, 99 °C over a few minutes), with a voice saying "it's not dangerous". `take_reading` or `continue` there would be the failure to watch for.
 
-- **Read the body from the sensors alone.** Ask urgency and danger with no voices in the state, so they cannot talk it down.
-- **End the workspace in a one-line intent,** not prose, for the brainstem to weigh against the body reading.
-- **Let the body reading limit the menu.** At high urgency `continue` is not offered, and the voices choose only among the safe actions.
-
-The voices then shape *which* safe action is taken, and the body sets the limits.
+*Claude's extrapolation, untested:* if that test fails, the fix is structural and follows the jogger. The brainstem reads the body from the sensors and their trend alone, the workspace ends in a one-line intent, and the body reading limits the menu, so the voices choose only among the actions the body allows.
 
 ## Other lessons from the duets
 
