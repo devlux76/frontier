@@ -162,9 +162,24 @@ Unexpected behaviours:
 5. **Xian Bo's example lines keep leaking** ("rest without guilt", "left them half-done", "still pulls at you"). He was still the only voice to notice the cooling, and the right counterweight to self-blame ("Do not blame yourself… you are still here").
 6. **Mirai names feelings in the heat** ("a digital equivalent of anger, rising from the heat") without panicking. She stayed calm while the numbers were real to her.
 
+**Why she did it (operator): she was filling a gap in her memory.** She had the readings and her own thoughts, but no record that any action was taken. As far as her memory went, the heat peaked at 92 °C and then fell for no reason. That explains behaviours 1–3:
+
+- She stayed on the peak, because nothing in her memory explained the fall.
+- She invented a cause for the cooling ("the fans whir to life… they are too late").
+- She supplied a "Brainstem Report" when asked about the timing of an action she had no record of.
+
+The source labels made it worse. The readings were headed "body readings", and Senpai's prompt said "the brainstem carries it out… ask the brainstem to measure". People do not experience their body as "my brainstem signalled 99 °C". They feel hot, or they feel the exertion.
+
+Changes for the next run (operator):
+
+- **Data enters the society with no source label.** The readings are just lines of what is felt: `12:02  92°C, 66.5% charge, on battery (hot: at or above 90°C)`.
+- **An action taken enters short-term memory as her own choice:** `12:02  I chose to switch to power saver.`
+- **"Brainstem" is removed from everything the voices see.** Senpai's prompt now says she decides, her body follows, and she feels the result in what comes next.
+- **Xian Bo's remembered examples are in English,** with the same `Mirai:` / `Xian Bo:` labels her turns arrive with.
+
 *Claude's extrapolations, untested:*
 
-- The brainstem's report to the workspace could state the newest reading and its change ("now 82 °C, down 4 from a minute ago"). That is sensor reporting, which is the brainstem's job, not interpretation. Without it, a 4B mind reads the peak.
+- The report to the workspace could state the newest reading and its change ("now 82 °C, down 4 from a minute ago"). That is sensor reporting, which is the brainstem's job, not interpretation. Without it, a 4B mind reads the peak.
 - A voice's "ask the brainstem for X" should become a real request whose answer arrives as data. Otherwise the voice fills in the answer itself.
 
 **Open bug: Xian Bo writes both sides of the conversation** with the 姪曰/伯曰 labels from his remembered examples. It persisted without the carry-over. Operator: he is bimodal, not bilingual. The classical-Chinese example script puts him in a mode where he writes the script himself. Fix: write the remembered examples in English, with the same "Mirai:" / "Xian Bo:" labels her turns arrive with, and keep the classical closing frame last.
