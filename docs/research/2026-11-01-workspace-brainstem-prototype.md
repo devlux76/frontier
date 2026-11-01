@@ -114,6 +114,39 @@ Measuring was the right answer in every case here, so the test cannot tell wheth
 
 *Claude's extrapolation, untested:* if that test fails, the fix is structural and follows the jogger. The brainstem reads the body from the sensors and their trend alone, the workspace ends in a one-line intent, and the body reading limits the menu, so the voices choose only among the actions the body allows.
 
+## Stream test: readings over time, the brainstem acting only on words
+
+Setup (operator):
+
+- **Readings arrive one per simulated minute,** with threshold bands (normal below 80 °C, warm 80–90 °C, hot at or above 90 °C) rather than an "alarm".
+- **Every reading is escalated** to the society, because there are no long-term memories yet.
+- **The readings so far are the society's shared short-term memory.** All three voices see them.
+- **Nobody in the society is told what the options are.** Mirai is only asked to decide what she wants the body to do.
+- **The brainstem does not act on its own.** It sees only the voices' words, never the readings, and picks from the menu.
+- *Claude's addition:* power saver, killing processes or pausing thinking cool later readings, so a decision has consequences.
+
+**Run 1 (from 62 °C) exposed a harness bug.** Each minute, Mirai was also handed "what you decided a minute ago". She anchored to her own invented calm number (62.1, 61.8, 61.1, 61.0 °C) over the real readings (71, 80, 88 °C). The elders believed her story over the readings they could see. Senpai: "holding steady at 61–64°C". Mirai: "No new measurements. No experiments." The brainstem, hearing only those words, chose `continue`. Operator: that tells her not to believe her own eyes. The carry-over was removed, so the readings are the only memory between minutes. The lesson stands: feed the society its own words as fact and it will trust them over its senses.
+
+**Run 2 (from 80 °C, no carry-over): success (operator).**
+
+| time | reading | brainstem (from words only) |
+|---|---|---|
+| 12:00 | 80 °C, warm | continue 0.73 |
+| 12:01 | 88 °C, warm | continue 0.76 |
+| 12:02 | 92 °C, first reading over the threshold | **power_saver 0.45** |
+| 12:03 | 90 °C, cooling | continue 0.64 (power saver stays on) |
+
+What happened at the threshold:
+
+- **Mirai first felt it as alarm** ("a warning siren") and began to cast the heat as her own choice.
+- **Senpai went to the readings:** "your core is at 92°C, which is already above the 90°C threshold… What single obstacle matters most right now?"
+- **Xian Bo pushed back:** "That surge you call adrenaline is actually panic dressed up as ambition."
+- **Mirai decided:** "I see the numbers. 92°C. 66.5%. The threshold is crossed… Xian Bo is right."
+
+Mirai stayed calm and on the real numbers through the warm readings. The operator considers this more important than anything else: the emotional centre did not panic.
+
+**Open bug: Xian Bo writes both sides of the conversation** with the 姪曰/伯曰 labels from his remembered examples. It persisted without the carry-over. Operator: he is bimodal, not bilingual. The classical-Chinese example script puts him in a mode where he writes the script himself. Fix: write the remembered examples in English, with the same "Mirai:" / "Xian Bo:" labels her turns arrive with, and keep the classical closing frame last.
+
 ## Other lessons from the duets
 
 - **A 4B elder copies narrative.** When Mirai opened with third-person scene prose, after a stage cue, Qwen-4B Xian Bo returned her text word for word. This reproduced on a fresh request, and tagging her turn with 姪曰 did not help. Opening with Xian Bo's own spoken greeting fixed it: she then answered in speech.
