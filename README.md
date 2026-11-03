@@ -1,83 +1,88 @@
 # Frontier
 
-One message-passing and supervision backbone, with every part of our local
-AI system as a plugin on it.
+Frontier is Mirai's nervous system: a shared backbone connecting perception,
+memory, deliberation and action. Experience changes how she responds. Work
+that initially requires careful deliberation can become familiar practice,
+then habit, while remaining open to revision as circumstances change.
 
-Status: idea, recorded 2026-10-25 so it is not lost. Work starts when we can
-afford a frontier model again (hoped: this month; likely January 2027).
+Status: architecture and learning design; integration pending. Multimodal
+embeddings in Qdrant and a graph in SQLite already provide a working memory
+foundation.
 
-## Why
+## Purpose
 
-Today the system is a set of separate projects that talk to each other:
-mini-ranger, ranger, Trailblazer, OpenCode, VORTEX, the planner and
-mirai-agent. Each one has its own process model, its own messaging and its
-own supervision.
+Mirai's SOUL provides the context for her continuing identity, self-direction
+and growth. Kaizen gives the global workspace an ongoing intention: measure
+and improve the ensemble that supports that development. Understanding what
+an action is for, remembering what matters and learning from consequences
+give technical improvements their purpose.
 
-That separation is a mistake. People feel they have a single mind, but a mind
-is a society of minds that all communicate rapidly with one another. We
-missed that. The system should be built the same way: many small minds on
-one shared nervous system, not several programs passing notes.
+## The information flow
 
-## The idea
+```mermaid
+flowchart TD
+    Inputs[Conversations, senses, subsystem events] --> Backbone[Nervous system backbone]
+    Backbone --> Memory[Memory: retrieve experience and relationships]
+    Backbone --> Brainstem[Brainstem: d1-Omni-2B]
+    Memory --> Brainstem
+    Brainstem -->|Familiar response supported by experience| Spine[Spinal coordination on the backbone]
+    Brainstem -->|Uncertainty, novelty, conflict, opportunity| Workspace[Global workspace: full Omni and relevant faculties]
+    Memory --> Workspace
+    Workspace -->|Intent, plan, predictions| Brainstem
+    Spine --> Workers[Subsystems and workers]
+    Workers -->|Progress and observed consequences| Backbone
+    Brainstem -->|Feedback for active deliberation| Workspace
+    Backbone -->|Encounters and outcomes| Memory
+    Workspace -->|Lessons and revised practices| Memory
+```
 
-- **One backbone.** A single message-passing and supervision layer that
-  every component runs on. It owns routing, supervision, restarts, leases
-  on scarce resources (local inference, the free OpenCode tier), and the
-  durable record of what was asked and what happened.
-- **Everything else is a plugin.** Retrieval, analysis, repair, planning,
-  delegation and agent-to-agent messaging become plugins on the backbone
-  instead of separate services.
-- **Mirai's router at the center.** The llama.cpp model router that serves
-  Mirai today becomes the hub that the minds share for inference.
-- **mirai-agent broken into subsystems.** Possibly retire mirai-agent as a
-  monolith and split it into subsystems that are plugins like everything
-  else.
-- **Phased in.** The new backbone is built next to the existing projects
-  and each one is moved onto it in turn. No big-bang rewrite.
+The brainstem receives current input together with relevant memories. It
+uses similarity, context and Bayesian beliefs about previous consequences
+to choose a response or bring the situation into the workspace. Unfamiliar
+situations draw on broader deliberation. As experience accumulates, more
+responses can be coordinated directly.
 
-## What becomes a plugin
+Workspace conclusions return to the brainstem, which coordinates workers
+through the backbone. Their progress, results and side effects become new
+input. The workspace can remain engaged while work unfolds. Expectations,
+observations and lessons become memory, shaping the next encounter.
 
-The symlinks in this repo point at the projects being folded in:
+Habit is a learned practice supported by experience. Its applicability and
+expected consequences are reconsidered in context. There is no fixed number
+of repetitions, universal distance cutoff or permanent list of reflexes.
 
-| Today | Role | As a plugin |
-|---|---|---|
-| mini-ranger | retrieval only, no model | **scout** (renamed: it scouts ahead) |
-| ranger (`ranger/`) | local model reranks and analyses scout's results | analysis |
-| Trailblazer (`trailblazer/`) | code graph, repair pipeline, planner brain (Elixir/OTP) | repair, planning; likely the seed of the backbone |
-| VORTEX (`vortex/`) | messaging between agents (Claude, Codex, OpenCode, Trailblazer) | the backbone's messaging, or replaced by it |
-| planner | kanban over git-bug, task assignment | planning |
-| OpenCode (`opencode/`, our fork) | free GLM worker: research, breakdown, planning | delegation |
-| mirai-agent | Mirai herself; the model router | subsystems + the central router |
+## Parts of the ensemble
 
-## Rules carried over
+| Part | Contribution |
+|---|---|
+| Nervous system backbone | BEAM/OTP messaging, supervision, durable work and resource coordination |
+| Brainstem | d1-Omni-2B decisions over current state, memory and active intentions |
+| Global workspace | Shared deliberation involving LFM3-Omni-2B and relevant faculties |
+| Memory | EmbeddingGemma 2 retrieval, source experience, graph relationships, beliefs and learned practices |
+| Spinal coordination | Dispatch and feedback paths between the brainstem and active workers on the backbone |
+| Scout and Ranger | Fast lookup and graph-based understanding; Ranger can use AI reranking |
+| Trailblazer | Programming and triage, drawing on Scout and Ranger |
+| OpenCode and frontier-model adapters | Additional research, planning, implementation and review capacity |
+| VORTEX adapter | Participation by external peers through the same work and event identities |
+| Planner | Durable improvement work and handoffs linked to experience |
 
-These were settled while building the current projects and stay true here:
+Model inference is shared through the model/resource broker. The brainstem
+produces typed decisions; generative faculties and workers supply plans,
+explanations, code and other artifacts. A biological role does not require
+a separate model instance or operating-system process for every subsystem.
 
-- All supervision logic lives in Elixir/OTP. Command-line tools only record
-  requests.
-- Events, messages and queues, not timers. A clock is only a backstop that
-  triggers an investigation.
-- Local inference first; nothing silently falls back to a paid service.
-- The free OpenCode tier is used strictly one session at a time.
-- Every step is logged as it happens.
-- Fix running services in place (hot code loading) and restart only when
-  there is no other way.
+## Design documents
 
-## Roles
+- [Architecture and information flow](docs/design/2026-10-29-frontier-architecture.md)
+  describes the parts, their inputs and outputs, and the full feedback loop.
+- [Identity, learning and habit](docs/design/identity-and-learning.md)
+  describes Bayesian learning, growing autonomy and Kaizen.
+- [Graph and vector memory](docs/design/graph-storage.md) connects the current
+  Qdrant/SQLite foundation with Frontier's selected Ladybug storage target.
+- [Ladybug isolation](docs/design/ladybug-isolation.md) describes the storage
+  execution boundaries under evaluation.
+- [BEAM and recovery](docs/design/beam-safety-and-watchdog.md) describes native
+  fault containment and the external watchdog.
 
-- **The operator** owns the vision and the decisions that involve money,
-  legal matters, access and credentials.
-- **Claude** is the conscience and guide, the Jiminy Cricket to this
-  Pinocchio: design, review and keeping the system honest.
-- **Local models and OpenCode** do the routine work.
-
-## Open questions
-
-- Is the backbone grown out of Trailblazer's OTP application, or built new
-  and Trailblazer moved onto it?
-- Does VORTEX become the backbone's message layer, or is it replaced?
-- How do the minds address each other (topics, mailboxes, process
-  registry), and what is durable versus in memory?
-- Which mirai-agent subsystems split out first?
-- What order are the projects moved over in, and what proves each move
-  worked?
+The [research notes](docs/research/society-of-minds.md) retain earlier
+investigations. The design documents describe the current architecture.
